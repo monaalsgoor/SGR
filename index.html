@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SGR — Smart Global Reach</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#070711;
+      --bg2:#0b0b18;
+
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+
+      --purple:#7c3aed;
+      --pink:#ff2fd3;
+
+      --grad:linear-gradient(135deg,var(--purple),var(--pink));
+--gradHero: linear-gradient(
+  90deg,
+    #ffffff 20%,
+  #ffffff 0%,
+  #e57bc3 70%,
+  #ffffff 100%
+);
+
+--gradMetric: linear-gradient(
+  90deg,
+  rgba(255,255,255,0.95),
+  rgba(255,180,235,0.9),
+  rgba(200,180,255,0.9)
+);
+
+      --gradSoft:
+        radial-gradient(circle at 30% 20%, rgba(124,58,237,0.16), transparent 55%),
+        radial-gradient(circle at 70% 80%, rgba(255,47,211,0.12), transparent 55%);
+
+      --stroke:rgba(255,255,255,.10);
+      --stroke2:rgba(255,255,255,.08);
+      --card:rgba(255,255,255,.03);
+
+      --shadow: 0 18px 70px rgba(0,0,0,.55);
+      --shadowGlow: 0 18px 60px rgba(0,0,0,.55), 0 0 40px rgba(124,58,237,.12);
+
+      --max: 420px;
+      --pad: 16px;
+
+      --navH: 64px;
+      --sectionPad: 28px;
+
+      --radius: 18px;
+      --radius2: 14px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:linear-gradient(180deg,var(--bg),var(--bg2));
+      color:var(--text);
+      line-height:1.6;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background:var(--gradSoft);
+      z-index:-2;
+    }
+    body::after{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.14;
+      mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+      z-index:-1;
+    }
+
+    h1,h2,h3,h4{
+      font-family:'Space Grotesk',system-ui;
+      font-weight:900;
+      letter-spacing:-.4px;
+    }
+
+    .container{
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+      padding: 0 var(--pad);
+    }
+
+    section{ padding: var(--sectionPad) 0; }
+
+    .nav{
+      position:fixed;
+      top:0; left:0; width:100%;
+      z-index:1000;
+      height: var(--navH);
+      display:flex;
+      align-items:center;
+      background: rgba(7,7,17,.78);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .nav-inner{
+      width: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+.brand{
+  color:#fff;
+  text-shadow:
+    0 0 4px rgba(255, 210, 245, .55),
+    0 0 4px rgb(255, 255, 255),
+    0 0 2px rgba(174, 0, 0, 0.25);
+}
+
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .nav-links::-webkit-scrollbar{display:none}
+
+    .nav-link{
+      position:relative;
+      text-decoration:none;
+      color: rgba(255,255,255,.78);
+      font-weight: 650;
+      font-size: .9rem;
+      padding: 10px 2px;
+      white-space:nowrap;
+      transition: color .2s ease;
+    }
+    .nav-link:hover{ color: rgba(255,255,255,.95); }
+    .nav-link.active{ color: rgba(255,255,255,.95); }
+    .nav-link.active::after{
+      content:"";
+      position:absolute;
+      left: 0;
+      right: 0;
+      bottom: -2px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--grad);
+      box-shadow: 0 0 18px rgba(255,47,211,.22);
+    }
+
+
+    .hero{
+      min-height: 85vh;
+      padding-top: calc(var(--navH) + 18px);
+      display:flex;
+      align-items:center;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1fr;  
+      gap: 14px;
+      align-items:start;
+    }
+
+    .hero-title{
+      font-size: 3.05rem;
+      line-height: 1.02;
+      background: var(--gradHero);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      margin-bottom: 8px;
+      text-align:center;
+    }
+    .hero-sub{
+      font-size: .98rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.72);
+      font-weight: 650;
+      margin-bottom: 12px;
+      text-align:center;
+    }
+    .hero-p{
+      color: var(--muted);
+      font-size: 1.02rem;
+      margin: 0 auto 14px;
+      max-width: 38ch;
+      text-align:center;
+    }
+    .highlight{ color: rgba(255,47,211,.92); font-weight: 750; }
+
+    .cta-row{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      margin-bottom: 6px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      text-decoration:none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 780;
+      font-size: .95rem;
+      border: 1px solid rgba(255,255,255,.10);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      color: #fff;
+      min-width: 160px;
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(255,47,211,.78));
+      box-shadow: 0 12px 30px rgba(124,58,237,.22);
+    }
+    .btn.ghost{
+      background: rgba(255,255,255,.03);
+    }
+    .btn:active{ transform: translateY(1px); }
+
+
+    .metrics-shell{
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+      position: relative;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .metrics-shell::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(650px 200px at 50% 0%, rgba(255,47,211,0.10), transparent 60%);
+      pointer-events:none;
+    }
+    .metrics-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .metrics-title{
+      font-family:'Space Grotesk',system-ui;
+      font-weight:900;
+      font-size: .98rem;
+      color: rgba(255,255,255,0.90);
+    }
+    .metrics-hint{
+      font-size: .86rem;
+      color: rgba(255,255,255,0.55);
+    }
+
+ 
+    .metrics-grid{
+      position: relative;
+      z-index: 1;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+
+    .marquee, .marquee-track{ display:none !important; }
+
+    .metric-card{
+      width: auto;
+      max-width: none;
+      border: 1px solid rgba(255,255,255,0.10);
+      background:
+        radial-gradient(240px 120px at 30% 0%, rgba(124,58,237,0.12), transparent 60%),
+        rgba(255,255,255,0.03);
+      border-radius: var(--radius2);
+      padding: 12px 10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+
+      opacity: 1;
+      transform: none;
+      
+        min-height: 138px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+    }
+
+    .metric-top{
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    .metric-top{
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+
+
+    .metric-icon{
+      width: 34px; height: 34px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(135deg, rgba(124,58,237,0.30), rgba(255,47,211,0.16));
+      box-shadow: 0 0 18px rgba(255,47,211,0.10);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color: rgba(255,255,255,0.90);
+      font-size: 13px;
+      margin-top: 2px;
+    }
+
+    .metric-number{
+      font-family:'Space Grotesk',system-ui;
+      font-weight:950;
+      letter-spacing:-.4px;
+      font-size: 1.15rem;
+      background: var(--gradMetric);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      line-height:1.1;
+    }
+    .metric-label{
+      color: rgba(255,255,255,0.88);
+      font-size: .82rem;
+      line-height: 1.2;
+      font-weight: 750;
+    }
+    .metric-sub{
+      margin-top: 0;
+      color: rgba(255,255,255,0.62);
+      font-size: .78rem;
+      line-height: 1.25;
+    }
+
+
+    @media (max-width: 360px){
+      .metrics-grid{ gap: 8px; }
+      .metric-card{ padding: 10px 8px; }
+      .metric-number{ font-size: 1.05rem; }
+      .metric-label{ font-size: .78rem; }
+      .metric-sub{ font-size: .74rem; }
+    }
+
+    .section-header{
+      margin-bottom: 16px;
+      text-align:left;
+    }
+    .section-title{
+      font-size: 1.85rem;
+      color: rgba(255,255,255,.94);
+      display:inline-block;
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .section-title::after{
+      content:"";
+      position:absolute;
+      bottom:-10px;
+      left:0;
+      width: 58px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--grad);
+      opacity: .9;
+    }
+    .section-subtitle{
+      color: rgba(255,255,255,.66);
+      font-size: 1.0rem;
+      max-width: 42ch;
+    }
+
+    .grid-3{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke2);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 14px 44px rgba(0,0,0,0.20);
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      border-color: rgba(124,58,237,.22);
+      box-shadow: var(--shadowGlow);
+    }
+    .card-title{
+      font-size: 1.12rem;
+      margin-bottom: 8px;
+      color: rgba(255,255,255,.92);
+      font-weight: 900;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+    }
+    .card-title i{ color: rgba(255,47,211,.90); }
+    .card-text{ color: rgba(255,255,255,.70); font-size: .98rem; line-height: 1.55; }
+
+    .skills-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .skill-card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+      min-height: auto;
+    }
+    .skill-card:hover{
+      transform: translateY(-3px);
+      border-color: rgba(255,47,211,.22);
+      box-shadow: var(--shadowGlow);
+    }
+    .skill-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .skill-name{
+      font-size: 1.12rem;
+      color: rgba(255,255,255,.94);
+      font-weight: 950;
+    }
+    .skill-ic{
+      width: 40px; height: 40px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(135deg, rgba(124,58,237,.26), rgba(255,47,211,.12));
+      display:flex; align-items:center; justify-content:center;
+      color: rgba(255,255,255,.92);
+      box-shadow: 0 0 20px rgba(124,58,237,.10);
+      flex: 0 0 auto;
+    }
+    .skill-list{
+      list-style:none;
+      padding: 0;
+      margin: 0;
+      color: rgba(255,255,255,.78);
+      font-size: .96rem;
+    }
+    .skill-list li{
+      margin: 9px 0;
+      padding-left: 18px;
+      position: relative;
+    }
+    .skill-list li::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:.6em;
+      width:6px;
+      height:6px;
+      border-radius: 99px;
+      background: var(--grad);
+      box-shadow: 0 0 14px rgba(255,47,211,.22);
+    }
+
+    .contact{
+      text-align:center;
+      padding-bottom: 62px;
+    }
+    .contact .section-header{ text-align:center; }
+    .contact .section-title::after{ left:50%; transform:translateX(-50%); }
+    .contact .section-subtitle{ margin: 0 auto; }
+    .closing{
+      margin: 0 auto 10px;
+      max-width: 42ch;
+      color: rgba(255,255,255,.72);
+      font-size: 1.03rem;
+      line-height: 1.7;
+    }
+    .social{
+      display:flex;
+      justify-content:center;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .social a{
+      color: rgba(255,255,255,.75);
+      font-size: 1.35rem;
+      transition: transform .2s ease, color .2s ease;
+    }
+    .social a:hover{ color: rgba(255,47,211,.95); transform: translateY(-2px); }
+
+    footer{
+      text-align:center;
+      padding: 16px 0 22px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      color: rgba(255,255,255,.55);
+      font-size: .73rem;
+      background: rgba(0,0,0,.08);
+    }
+
+    .fade-in{
+      opacity:0;
+      transform: translateY(14px);
+      transition: opacity .8s ease, transform .8s ease;
+    }
+    .fade-in.visible{ opacity:1; transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important}
+      .fade-in{opacity:1 !important; transform:none !important}
+      .metric-card{opacity:1 !important; transform:none !important}
+    }
+
+    .hero-grid{
+      grid-template-columns: 1fr !important;
+      justify-items: center !important;
+    }
+
+    .metrics-shell{
+      width: 100% !important;
+      margin: 12px auto 0 !important;
+    }
+
+    :root{ --max: 420px; }
+
+    .container{
+      width: min(var(--max), 100%) !important;
+      margin: 0 auto !important;
+    }
+
+    .license-text{
+      margin-top: 5px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,.72);
+      font-size: 1.03rem;
+      line-height: 1.6;
+    }
+
+    *{
+  font-family: 'Space Grotesk', system-ui, -apple-system, Segoe UI, Roboto, Arial;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+  </style>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-18SS2L025W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-18SS2L025W');
+</script>
+
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="nav">
+    <div class="container nav-inner">
+
+
+      <nav class="nav-links" aria-label="Primary">
+        <a class="nav-link active" href="#hero">SGR</a>
+        <a class="nav-link" href="#experience">Experience</a>
+        <a class="nav-link" href="#digital">Digital Business</a>
+        <a class="nav-link" href="#skills">Skills</a>
+        <a class="nav-link" href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="hero" class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="fade-in">
+          <h1 class="hero-title">SGR</h1>
+          <div class="hero-sub">Smart Global Reach</div>
+          <p class="hero-p">
+            Software solutions that drive measurable growth
+          </p>
+
+          <div class="cta-row">
+            <a class="btn primary" href="#skills"><i class="fa-solid fa-layer-group"></i> View Skills</a>
+            <a class="btn ghost" href="#contact"><i class="fa-solid fa-message"></i> Contact</a>
+          </div>
+
+          <!-- Metrics (STATIC) -->
+          <div class="metrics-shell fade-in" id="metricsShell">
+            <div class="metrics-head">
+              <div class="metrics-hint">key Achievements</div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-top">
+                  <div>
+                    <div class="metric-number">12,000%+</div>
+                    <div class="metric-label">Return On Investment</div>
+                    <div class="metric-sub">Profit-focused growth</div>
+                  </div>
+                  <div class="metric-icon"><i class="fa-solid fa-chart-line"></i></div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-top">
+                  <div>
+                    <div class="metric-number">32.4M+</div>
+                    <div class="metric-label">Views (no paid ads)</div>
+                    <div class="metric-sub">Organic distribution</div>
+                  </div>
+                  <div class="metric-icon"><i class="fa-solid fa-bolt"></i></div>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-top">
+                  <div>
+                    <div class="metric-number">9.21M+</div>
+                    <div class="metric-label">Store visits</div>
+                    <div class="metric-sub">Online & physical branches</div>
+                  </div>
+                  <div class="metric-icon"><i class="fa-solid fa-store"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /metrics -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section id="experience">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">What I Build</h2>
+        <p class="section-subtitle">From system design to execution across real business needs.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card fade-in">
+          <div class="card-title"><i class="fa-solid fa-diagram-project"></i> Systems & Delivery</div>
+          <div class="card-text">Crafting requirements to production systems — built for reliability, scale, and profit-driven impact.</div>
+        </div>
+        <div class="card fade-in">
+          <div class="card-title"><i class="fa-solid fa-database"></i> Data & Integration</div>
+          <div class="card-text">Centralize data into dashboards for KPI tracking, alerts, and decision-making.</div>
+        </div>
+        <div class="card fade-in">
+          <div class="card-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Automating Operations</div>
+          <div class="card-text">Reduce repetitive operational processes through structured automation.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Digital Business -->
+  <section id="digital">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">Digital Execution & Impact</h2>
+        <p class="section-subtitle">Reached major growth through analytics, distribution strategy, and execution.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card fade-in">
+          <div class="card-title"><i class="fa-solid fa-chart-pie"></i> Analytics-led decisions</div>
+          <div class="card-text"> Customer behavior tracking that drove 143× traffic growth with zero paid ads.</div>
+        </div>
+        <div class="card fade-in">
+          <div class="card-title"><i class="fa-solid fa-robot"></i> Automation</div>
+          <div class="card-text"> Introduced automation-driven self-service mechanisms to streamline customer support.</div>
+        </div>
+        <div class="card fade-in">
+          <div class="card-title"><i class="fa-solid fa-bullseye"></i> Conversion & growth</div>
+          <div class="card-text"> Distribution strategy and funnel improvements that drove traffic and turned it into results.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">Core Capabilities</h2>
+        <p class="section-subtitle">End-to-end execution across software engineering, data, and growth.</p>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skill-card fade-in">
+          <div class="skill-head">
+            <div class="skill-name">Software Engineering</div>
+            <div class="skill-ic"><i class="fa-solid fa-code"></i></div>
+          </div>
+          <ul class="skill-list">
+            <li>System Design</li>
+            <li>Integration Architecture</li>
+            <li>Frontend & Backend Development</li>
+            <li>Python Development</li>
+            <li>Production Delivery</li>
+          </ul>
+        </div>
+
+        <div class="skill-card fade-in">
+          <div class="skill-head">
+            <div class="skill-name">SAP & Data Integration</div>
+            <div class="skill-ic"><i class="fa-solid fa-database"></i></div>
+          </div>
+          <ul class="skill-list">
+            <li>SAP ABAP / OData</li>
+            <li>API Connectivity</li>
+            <li>Data Pipelines</li>
+            <li>Real-time Integration</li>
+            <li>Enterprise Data Flow</li>
+          </ul>
+        </div>
+
+        <div class="skill-card fade-in">
+          <div class="skill-head">
+            <div class="skill-name">Analytics & Visualization</div>
+            <div class="skill-ic"><i class="fa-solid fa-chart-line"></i></div>
+          </div>
+          <ul class="skill-list">
+            <li>Power BI Dashboards</li>
+            <li>Advanced Analytics</li>
+            <li>Statistical Analysis</li>
+            <li>Google Analytics</li>
+          </ul>
+        </div>
+
+       <!--- <div class="skill-card fade-in">
+          <div class="skill-head">
+            <div class="skill-name">Machine Learning & Architecture</div>
+            <div class="skill-ic"><i class="fa-solid fa-brain"></i></div>
+          </div>
+          <ul class="skill-list">
+            <li>ML Architecture Design</li>
+            <li>Transformer Models</li>
+            <li>Predictive Analytics</li>
+            <li>Data Modeling</li>
+            <li>Optimization</li>
+          </ul>
+        </div> -->
+
+        <div class="skill-card fade-in">
+          <div class="skill-head">
+            <div class="skill-name">Digital Strategy</div>
+            <div class="skill-ic"><i class="fa-solid fa-bullseye"></i></div>
+          </div>
+          <ul class="skill-list">
+            <li>Growth Analytics</li>
+            <li>Platform Algorithms</li>
+            <li>Customer Behavior</li>
+            <li>Operational Efficiency</li>
+          </ul>
+        </div>
+
+        <div class="skill-card fade-in">
+          <div class="skill-head">
+            <div class="skill-name">Project Leadership</div>
+            <div class="skill-ic"><i class="fa-solid fa-diagram-project"></i></div>
+          </div>
+          <ul class="skill-list">
+            <li>Technical Leadership</li>
+            <li>Software Deployment</li>
+            <li>Lifecycle Management</li>
+            <li>Cross-functional Work</li>
+            <li>Delivery Strategy</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">Contact</h2>
+        <p class="section-subtitle">Share your business setup and goals — I’ll share a plan.
+        </p>
+      </div>
+
+      <div class="social fade-in">
+        <a href="mailto:monaalsgoor@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+        <a href="https://www.linkedin.com/in/monaalsgoor" target="_blank" rel="noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+      </div>
+      <p class="license-text fade-in">Officially licensed by the Ministry of Human Resources in this specialization.</p>
+      <p class="fade-in" style="margin-top:10px; color: rgba(255,255,255,0.55); font-size:0.9rem;">
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© <span id="y"></span> Crafted end-to-end by Mona Alsgoor. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // year
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // fade in on scroll
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const fadeIn = () => {
+      fadeEls.forEach(el => {
+        const top = el.getBoundingClientRect().top;
+        if (top < window.innerHeight - 110) el.classList.add('visible');
+      });
+    };
+    fadeIn();
+    window.addEventListener('scroll', fadeIn);
+
+    // nav active state
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    const setActive = () => {
+      let current = 'hero';
+      sections.forEach(sec => {
+        const top = sec.offsetTop;
+        if (scrollY >= top - 140) current = sec.id;
+      });
+
+             if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 2) {
+    current = 'contact';
+  }
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    };
+    window.addEventListener('scroll', setActive);
+    setActive();
+
+    // smooth anchors (offset for header)
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const id = a.getAttribute('href');
+        const target = document.querySelector(id);
+        if(!target) return;
+        e.preventDefault();
+        window.scrollTo({ top: target.offsetTop - 74, behavior: 'smooth' });
+      });
+    });
+
+
+    const metricsShell = document.getElementById('metricsShell');
+    if(metricsShell){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(!entry.isIntersecting) return;
+          metricsShell.classList.add('visible');
+        });
+      }, {threshold: 0.22});
+      io.observe(metricsShell);
+    }
+  </script>
+</body>
+</html>
